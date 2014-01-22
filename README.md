@@ -19,7 +19,7 @@ I strongly recommend to check out the original project as gplaymusic-pi is for t
 `sudo pip install django`
 `sudo pip install git+git://github.com/simon-weber/Unofficial-Google-Music-API.git@develop`
 * Now clone this repository:
-`git clone git://github.com/mherwig/play-pi.git`
+`git clone git://github.com/mherwig/gplaymusic-pi.git`
 `cd play-pi`
 * Create a file called `local_settings.py` in the same folder as `settings.py`. Add the following lines:
 `GPLAY_USER="you@gmail.com"`
