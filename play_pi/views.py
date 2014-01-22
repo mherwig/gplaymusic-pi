@@ -24,21 +24,27 @@ def home(request):
 	if GPLAY_USER == "" or GPLAY_PASS == "":
 		return render_to_response('error.html', context_instance=RequestContext(request))
 	artists = Artist.objects.all().order_by('name')
+	artists_count = artists.count()
+	playlists_count = Playlist.objects.all().count()
 	return render_to_response('index.html',
-		{'list': artists, 'view':'artist'},
+		{'list': artists, 'artists_count': artists_count, 'playlists_count': playlists_count, 'view':'artist'},
 		context_instance=RequestContext(request))
 
 def artist(request,artist_id):
 	artist = Artist.objects.get(id=artist_id)
 	albums = Album.objects.filter(artist=artist)
+	artists_count = Artist.objects.all().count()
+	playlists_count = Playlist.objects.all().count()
 	return render_to_response('index.html',
-		{'list': albums, 'view':'album', 'artist': artist},
+		{'list': albums, 'artists_count': artists_count, 'playlists_count': playlists_count, 'view':'album', 'artist': artist},
 		context_instance=RequestContext(request))
 
 def playlists(request):
 	playlists = Playlist.objects.all()
+	playlists_count = playlists.count()
+	artists_count = Artist.objects.all().count()
 	return render_to_response('index.html',
-		{'list': playlists, 'view':'playlist'},
+		{'list': playlists, 'artists_count': artists_count, 'playlists_count': playlists_count, 'view':'playlist'},
 		context_instance=RequestContext(request))
 
 def playlist(request,playlist_id):

@@ -5,31 +5,51 @@
 {% endblock %}
 
 {% block content %}
+<ol class="breadcrumb">
+	<li><a href="{% url 'home' %}">Home</a></li>
+	<li><a href="{% url 'playlists' %}">Playlists</a></li>
+	<li class="active">{{ playlist.name }}</li>
+</ol
 
-<ul class="breadcrumb">
-  <li><a href="{% url 'home' %}">Home</a> <span class="divider">/</span></li>
-  <li><a href="{% url 'playlists' %}">Playlists</a> <span class="divider">/</span></li>
-  <li class="active">{{ playlist.name }}</li>
-</ul>
-
-<div class="page-header">
-	  <h1>{{ playlist.name }}</h1>
+<div class="row">
+	<div class="col-xs-12 col-md-2">
+		<div class="thumbnail">
+			<img src="{{ playlist.art_url }}" alt="">
+		</div>
+	</div>
+	<div class="col-xs-12 col-md-10">
+		<div class="panel panel-default">
+			<!-- Default panel contents -->
+			<div class="panel-heading">
+				<h3>
+					<a href="{% url 'play_playlist' playlist.id %}">
+						<span class="glyphicon glyphicon-play">&nbsp;</span>
+					</a>
+					{{ playlist.name }}
+				</h3>
+			</div>
+			<div class="table-responsive">
+				<!-- Table -->
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<td class="col-xs-1 col-md-1">Title</td>
+							<!--<td class="col-xs-1 col-md-1">
+								<span class="glyphicon glyphicon-time"></span>
+							</td>-->
+						</tr>
+					</thead>
+					<tbody>
+						{% for track in tracks %}
+						<tr>
+							<td>{{ track.name }}</td>
+							<!--<td></td>-->
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
-
-<img src='{{ playlist.art_url }}' class='album-image' alt=''/>
-<a id='play-link' class='play-playlist' href='{% url "play_playlist" playlist.id %}'>▶ Play Playlist</a>
-
-<table class="table table-striped album-table">
-  <tr>
-  	<th class='play-col'></th>
-  	<th>Name</th>
-  </tr>
-  {% for track in tracks %}
-    <tr>
-    	<td class='play-col'><a href='{% url "play_track" track.id %}'>▶</a></td>
-    	<td>{{ track.name }}</td>
-    </tr>
-  {% endfor %}
-</table>
-
 {% endblock %}

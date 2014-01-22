@@ -59,18 +59,19 @@ class Command(BaseCommand):
                 artist = Artist.objects.get(name=a)
             track.artist = artist
 
-            if song['album'] not in albums:
+            if song['album']+ a not in albums:
                 album = Album()
                 album.name = song['album']
+                album.year = song['year']
                 album.artist = artist
                 try:
                     album.art_url = song['albumArtUrl']
                 except:
                     album.art_url = ""
                 album.save()
-                albums.append(song['album'])
+                albums.append(song['album']+ a)
             else:
-                album = Album.objects.get(name=song['album'])
+                album = Album.objects.get(name=song['album'], artist=artist)
             track.album = album
 
             track.name = song['title']

@@ -7,31 +7,39 @@
 {% block content %}
 
 {% if view == 'album' %}
-<ul class="breadcrumb">
-  <li><a href="{% url 'home' %}">Home</a> <span class="divider">/</span></li>
-  <li class="active">{{ artist.name }}</li>
-</ul>
+<ol class="breadcrumb">
+	<li><a href="{% url 'home' %}">Home</a></li>
+	<li class="active">{{ artist.name }}</li>
+</ol>
 
-<a id='play-link' class='play-artist' href='{% url "play_artist" artist.id %}'>▶ Play Artist</a>
+<a href="{% url 'play_artist' artist.id %}">
+	<span class="glyphicon glyphicon-play">&nbsp;</span>Play Artist
+</a>
 {% endif %}
 
-<div class='row'>
-  <form class="form-search">
-    <input type="text" id="search-box" class="span12 search-query" placeholder="Filter" />
-  </form>
-</div>
-
-<div class="thumbnails">
-
-{% for item in list %}
-
-<a href="{% url view item.id %}" class="thumbnail" name="{{ item.name }}">
-	<img src="{{ item.art_url }}" alt="">
-	<h3>{{ item.name }}</h3>
-</a>
-
-{% endfor %}
-
+<div class="row">
+	{% for item in list %}
+	<div class="col-xs-12 col-md-3">
+		<a href="{% url view item.id %}" alt="">
+			<div name="{{ item.name }}" class="thumbnail">
+				{% if view == 'artist' %}
+				<div class="banner">
+					{% if item.get_albums.count > 1 %}
+					<span class="badge">+{{ item.get_albums.count|add:-1 }}</span>
+					{% endif %}
+					<img src="{{ item.get_latest_album.art_url }}" alt="">
+					<img src="{{ item.get_latest_album.art_url }}" alt="">
+				</div>
+				{% else %}
+				<img src="{{ item.art_url }}" alt="">
+				{% endif %}
+				<div class="caption">
+					<h3>{{ item.name }}</h3>
+				</div>
+			</div>
+		</a>
+	</div>
+	{% endfor %}
 </div>
 
 {% endblock %}

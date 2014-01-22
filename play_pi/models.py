@@ -1,16 +1,24 @@
 from django.db import models
+from django.db.models import Count
 
 
 class Artist(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	art_url = models.CharField(max_length=200)
-
+	
+	def get_albums(self):
+		albums = Album.objects.filter(artist=self)
+		return albums
+	
+	def get_latest_album(self):
+		album = Album.objects.filter(artist=self).order_by('year').reverse()[:1].get()
+		return album
 
 class Album(models.Model):
-	name = models.CharField(max_length=200, unique=True)
+	name = models.CharField(max_length=200)
+	year = models.IntegerField(default=0)
 	art_url = models.CharField(max_length=200)
 	artist = models.ForeignKey(Artist)
-
 
 class Track(models.Model):
 	name = models.CharField(max_length=200)

@@ -1,96 +1,70 @@
 {% load static %}
 <!DOCTYPE html>
-
-<html lang="en">
-<head>
-
-<title>Play Pi</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="stylesheet" type="text/css" href="{% get_static_prefix %}css/bootstrap.min.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="{% get_static_prefix %}css/style.css" media="screen" />
-
-<script src="{% get_static_prefix %}js/jquery.min.js"></script>
-
-<link rel="shortcut icon" type="image/x-icon" href="{% get_static_prefix %}img/favicon.ico" />
-
-<link rel='apple-touch-icon-precomposed' href='{% get_static_prefix %}img/apple-touch-icon.png' />
-
-<script>
-$(document).ready(function() {
-
-  $('#search-box').keyup(function() {
-    $('.thumbnail').each(function(){
-        if($(this).attr('name').toLowerCase().indexOf($('#search-box').val().toLowerCase()) == -1){
-            $(this).hide();
-        }else{
-            $(this).show();
-        }
-    });
-  });
-
-  function ajax(toggle){
-    $.ajax("/ajax/"+toggle+"/",{ type: "GET" }).always(function (response) {
-      results = JSON.parse(response['responseText']);
-      if(toggle != "stop"){
-        $("#"+toggle+"-button").toggleClass('btn-highlight');
-      }
-    });
-    return false;
-  }
-
-  $('#random-button').click(function(e){
-      e.preventDefault();
-      ajax("random");
-  });
-  $('#stop-button').click(function(e){
-      e.preventDefault();
-      ajax("stop");
-  });
-  $('#repeat-button').click(function(e){
-      e.preventDefault();
-      ajax("repeat");
-  });
-
-});
-</script>
-
-</head>
-<body>
-
-<div id='content'>
-
-
-<div class='container'>
-
-<header class="jumbotron" id="overview">
-  <div class="container">
-    <h1>Play Pi</h1>
-    <p class="lead">Google Play Music Control Station</p>
-    <p>
-      <a class="btn btn-danger" href='{% url "stop" %}' id='stop-button'>
-          <i class='icon-stop icon-white'></i> Stop
-      </a>
-      <a class="btn {% if mpd_status.random == '1' %}btn-highlight{% endif %} btn-inverse" href='{% url "random" %}' id='random-button'>
-          <i class='icon-random icon-white'></i> Random
-      </a>
-      <a class="btn {% if mpd_status.repeat == '1' %}btn-highlight{% endif %} btn-inverse" href='{% url "repeat" %}' id='repeat-button'>
-          <i class='icon-repeat icon-white'></i> Repeat
-      </a>
-    </p>
-    <a class='nav-link' href='{% url "home" %}'>
-        <i class='icon-user'></i> Artists
-    </a>
-    <a class='nav-link' href='{% url "playlists" %}'>
-        <i class='icon-list'></i> Playlists
-    </a>
-  </div>
-</header>
-{% block content %}
-  Hello World
-{% endblock %}
-</div>
-</div>
-
-</body>
+<html>
+    <head>
+        <title>play-pi</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet">
+        <link href="{% get_static_prefix %}css/style.css" rel="stylesheet">
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <nav class="navbar navbar-default" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">gplaymusic-pi</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+						<a href='{% url "home" %}'><span class="glyphicon glyphicon-th">&nbsp;</span>Artists&nbsp;<span class="badge">{{ artists_count }}</span></a>
+					</li>
+                    <li>
+						<a href='{% url "playlists" %}'><span class="glyphicon glyphicon-list">&nbsp;</span>Playlists <span class="badge">{{ playlists_count }}</span></a>
+					</li>
+                </ul>
+                <form class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                        <input id="search-box" type="text" class="form-control" placeholder="Filter">
+                    </div>
+                    <button type="submit" class="btn btn-default">
+						<span class="glyphicon glyphicon-search"></span>
+					</button>
+                </form>
+                <a href='{% url "stop" %}' id="stop-button" class="btn btn-default navbar-btn">
+					<span class="glyphicon glyphicon-stop">&nbsp;</span>stop
+				</a>
+                <a href='{% url "stop" %}' id="repeat-button"class="btn {% if mpd_status.repeat == '1' %}btn-highlight{% endif %} btn-default navbar-btn ">
+					<span class="glyphicon glyphicon-repeat">&nbsp;</span>repeat
+				</a>
+                <a href='{% url "random" %}' id="random-button" class="btn {% if mpd_status.random == '1' %}btn-highlight{% endif %} btn-default navbar-btn">
+					<span class="glyphicon glyphicon-random">&nbsp;</span>random
+				</a>
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+        <div class="container">  
+		{% block content %}
+		Hello World
+		{% endblock %}      
+        </div>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="{% get_static_prefix %}js/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
+        <script src="{% get_static_prefix %}js/script.js"></script>
+    </body>
 </html>
