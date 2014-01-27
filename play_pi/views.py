@@ -1,5 +1,5 @@
 from gmusicapi import Webclient
-import mpd
+from mpd import MPDClient
 from django.core.cache import cache
 
 from django.http import HttpResponseRedirect, HttpResponse
@@ -17,7 +17,7 @@ logger = logging.getLogger('play_pi')
 api = Webclient()
 api.login(GPLAY_USER,GPLAY_PASS)
 
-client = mpd.MPDClient()
+client = MPDClient()
 client.connect("localhost", 6600)
 
 def home(request):
@@ -119,16 +119,37 @@ def repeat(request):
 	client.repeat( (-1 * int(status['repeat'])) + 1 )
 	logger.debug(status)
 	return HttpResponseRedirect(reverse('home'))
+	
+def pause(request):
+	client = get_client()
+	status = client.status()
+	state = status['state']
+
+	if state == 'play':
+		client.pause(1)
+	elif state == 'pause':
+		client.pause(0)
+
+	logger.debug(status)
+	return HttpResponseRedirect(reverse('home'))
 
 def ajax(request,method):
 	client = get_client()
 	status = client.status()
+	state = status['state']
+	
 	if method == 'random':
 		client.random( (-1 * int(status['random'])) + 1 )
 	elif method == 'repeat':
 		client.repeat( (-1 * int(status['repeat'])) + 1 )
+	elif method == 'pause':
+		if state == 'play':
+			client.pause(1)
+		elif state == 'pause':
+			client.pause(0)
 	elif method == 'stop':
 		client.stop()
+		
 	return_data = client.status()
 	return HttpResponse(simplejson.dumps(return_data), 'application/javascript')
 
