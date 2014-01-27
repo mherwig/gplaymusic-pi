@@ -23,9 +23,9 @@
 			<div class="panel-heading">
 				<h3>
 					<a href="{% url 'play_album' album.id %}">
-						<span class="glyphicon glyphicon-play">&nbsp;</span>
+						<span class="glyphicon glyphicon-play"></span>
 					</a>
-					{{ album.name }}<small> {{ album.artist.name }}</small>
+					&nbsp;{{ album.name }}<small> {{ album.artist.name }}</small>
 				</h3>
 			</div>
 			<div class="table-responsive">
@@ -34,10 +34,10 @@
 					<thead>
 						<tr>
 							<td class="col-xs-1 col-md-1">#</td>
-							<td class="col-xs-1 col-md-1">Title</td>
-							<!--<td class="col-xs-1 col-md-1">
+							<td>Title</td>
+							<td class="col-xs-1 col-md-1">
 								<span class="glyphicon glyphicon-time"></span>
-							</td>-->
+							</td>
 						</tr>
 					</thead>
 					<tbody>
@@ -45,7 +45,7 @@
 						<tr>
 							<td>{{ track.track_no }}</td>
 							<td>{{ track.name }}</td>
-							<!--<td></td>-->
+							<td>{{ track.get_formatted_duration }}</td>
 						</tr>
 						{% endfor %}
 					</tbody>

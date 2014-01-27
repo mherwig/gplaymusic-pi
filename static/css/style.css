@@ -1,3 +1,6 @@
+body{
+	padding-top: 47px;
+}
 .banner{
 	position: relative;
 	overflow: hidden;
@@ -32,13 +35,17 @@
 	top: 5px;
 	z-index: 1;
 }
-
 .caption h3{
 	font-weight: lightier;
-	text-decoration:none;
+	text-decoration: none;
 	font-size: 1.1em;
 }
-
+a:hover {
+	text-decoration: none;
+}
 .banner span.badge{
-	background-color: #5bc0de;
+	background-color: #d9534f;
+}
+#nowplaying{
+	
 }

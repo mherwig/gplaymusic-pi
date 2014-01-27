@@ -36,29 +36,33 @@ def artist(request,artist_id):
 	artists_count = Artist.objects.all().count()
 	playlists_count = Playlist.objects.all().count()
 	return render_to_response('index.html',
-		{'list': albums, 'artists_count': artists_count, 'playlists_count': playlists_count, 'view':'album', 'artist': artist},
+		{'list': albums, 'artist': artist, 'artists_count': artists_count, 'playlists_count': playlists_count, 'view':'album'},
 		context_instance=RequestContext(request))
 
 def playlists(request):
 	playlists = Playlist.objects.all()
-	playlists_count = playlists.count()
 	artists_count = Artist.objects.all().count()
+	playlists_count = playlists.count()
 	return render_to_response('index.html',
-		{'list': playlists, 'artists_count': artists_count, 'playlists_count': playlists_count, 'view':'playlist'},
+		{'list': playlists, 'artists_count': artists_count, 'playlists_count': playlists_count,'view':'playlist'},
 		context_instance=RequestContext(request))
 
 def playlist(request,playlist_id):
 	playlist = Playlist.objects.get(id=playlist_id)
 	tracks = [pc.track for pc in PlaylistConnection.objects.filter(playlist=playlist)]
+	artists_count = Artist.objects.all().count()
+	playlists_count = Playlist.objects.all().count()
 	return render_to_response('playlist.html',
-		{'playlist': playlist, 'tracks': tracks},
+		{'playlist': playlist, 'tracks': tracks, 'artists_count': artists_count, 'playlists_count': playlists_count},
 		context_instance=RequestContext(request))
 
 def album(request,album_id):
 	album = Album.objects.get(id=album_id)
 	tracks = Track.objects.filter(album=album).order_by('track_no')
+	artists_count = Artist.objects.all().count()
+	playlists_count = Playlist.objects.all().count()
 	return render_to_response('album.html',
-		{'album': album, 'tracks': tracks},
+		{'album': album, 'tracks': tracks, 'artists_count': artists_count, 'playlists_count': playlists_count},
 		context_instance=RequestContext(request))
 
 def play_album(request,album_id):

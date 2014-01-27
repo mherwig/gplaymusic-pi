@@ -3,9 +3,10 @@
 gplaymusic-pi provides a web-frontend for browsing and playing music from a [Google Play Music](http://play.google.com/music/) library.
 Installed on a RaspberryPi that you usally only access remotely, gmusicplay-pi allows you to turn your Raspi into a jukeboy playing music from your Google Play Music library without the need of having a VNC session for browsing songs.
 
-gplaymusic-pi is a fork of [play-pi](https://github.com/fredley/play-pi) by [Tom Medley (fredley)](https://github.com/fredley) and is probably less stable and flawless in its current state than the original project.
+gplaymusic-pi is a fork of [play-pi](https://github.com/fredley/play-pi) by [Tom Medley (fredley)](https://github.com/fredley) and is probably less stable and less flawless in its current state than the original project.
 I strongly recommend to check out the original project as gplaymusic-pi is for testing purposes in its current state.
 
+Note: The template isn't finished yet either! Some features might be missing.
 
 ![Screenshot](http://i.imgur.com/roqEV3h.png)
 
