@@ -75,6 +75,7 @@ class Command(BaseCommand):
             track.album = album
 
             track.name = song['title']
+            track.duration = song['durationMillis']
             track.stream_id = song['id']
             try:
                 track.track_no = song['track']

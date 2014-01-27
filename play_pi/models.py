@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Count
 
+import time
 
 class Artist(models.Model):
 	name = models.CharField(max_length=200, unique=True)
@@ -26,6 +27,10 @@ class Track(models.Model):
 	album = models.ForeignKey(Album)
 	stream_id = models.CharField(max_length=100)
 	track_no = models.IntegerField(default=0)
+	duration = models.IntegerField(default=0)
+	
+	def get_formatted_duration(self):
+		return time.strftime("%M:%S", time.gmtime(self.duration/1000))
 
 
 class Playlist(models.Model):
