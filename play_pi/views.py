@@ -6,7 +6,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.utils import simplejson
+
+import json
 
 from play_pi.models import *
 from play_pi.settings import GPLAY_USER, GPLAY_PASS, SITE_ROOT
@@ -24,45 +25,35 @@ def home(request):
 	if GPLAY_USER == "" or GPLAY_PASS == "":
 		return render_to_response('error.html', context_instance=RequestContext(request))
 	artists = Artist.objects.all().order_by('name')
-	artists_count = artists.count()
-	playlists_count = Playlist.objects.all().count()
 	return render_to_response('index.html',
-		{'list': artists, 'artists_count': artists_count, 'playlists_count': playlists_count, 'view':'artist'},
+		{'list': artists, 'view':'artist'},
 		context_instance=RequestContext(request))
 
 def artist(request,artist_id):
 	artist = Artist.objects.get(id=artist_id)
 	albums = Album.objects.filter(artist=artist)
-	artists_count = Artist.objects.all().count()
-	playlists_count = Playlist.objects.all().count()
 	return render_to_response('index.html',
-		{'list': albums, 'artist': artist, 'artists_count': artists_count, 'playlists_count': playlists_count, 'view':'album'},
+		{'list': albums, 'artist': artist, 'view':'album'},
 		context_instance=RequestContext(request))
 
 def playlists(request):
 	playlists = Playlist.objects.all()
-	artists_count = Artist.objects.all().count()
-	playlists_count = playlists.count()
 	return render_to_response('index.html',
-		{'list': playlists, 'artists_count': artists_count, 'playlists_count': playlists_count,'view':'playlist'},
+		{'list': playlists, 'view':'playlist'},
 		context_instance=RequestContext(request))
 
 def playlist(request,playlist_id):
 	playlist = Playlist.objects.get(id=playlist_id)
 	tracks = [pc.track for pc in PlaylistConnection.objects.filter(playlist=playlist)]
-	artists_count = Artist.objects.all().count()
-	playlists_count = Playlist.objects.all().count()
 	return render_to_response('playlist.html',
-		{'playlist': playlist, 'tracks': tracks, 'artists_count': artists_count, 'playlists_count': playlists_count},
+		{'playlist': playlist, 'tracks': tracks},
 		context_instance=RequestContext(request))
 
 def album(request,album_id):
 	album = Album.objects.get(id=album_id)
 	tracks = Track.objects.filter(album=album).order_by('track_no')
-	artists_count = Artist.objects.all().count()
-	playlists_count = Playlist.objects.all().count()
 	return render_to_response('album.html',
-		{'album': album, 'tracks': tracks, 'artists_count': artists_count, 'playlists_count': playlists_count},
+		{'album': album, 'tracks': tracks},
 		context_instance=RequestContext(request))
 
 def play_album(request,album_id):

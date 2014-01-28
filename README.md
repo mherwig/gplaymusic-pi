@@ -35,3 +35,4 @@ During this step you will be asked for a superuser name and password. You can us
 `sudo ./manage.py runserver 0.0.0.0:8080`
 * You should now be able to access gplaymusic-pi from your web browser, point it at the IP of your Pi followed by the port.
 * Note that starting the server on any other port requires you to change the settings.py accordingly.
+* For better performance I suggest to use nginx and uwsgi. You find a pretty good tutorial [here](https://uwsgi-docs.readthedocs.org/en/latest/tutorials/Django_and_nginx.html)

@@ -105,6 +105,8 @@ TEMPLATE_LOADERS = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'play_pi.context_processors.mpd_status',
+    'play_pi.context_processors.artists_playlists_count',
+    'play_pi.context_processors.current_track',
 )
 
 MIDDLEWARE_CLASSES = (
