@@ -16,9 +16,14 @@ def artists_playlists_count(request):
 def current_track(request):
 	client = MPDClient()
 	client.connect("localhost", 6600)
-	stream_url = client.currentsong()['file'].rstrip('/')
-	index = stream_url.rfind("/")
-	track_id = stream_url[index+1:]
-	current_track = Track.objects.get(id=track_id)
+	
+	try:
+		stream_url = client.currentsong()['file'].rstrip('/')
+		index = stream_url.rfind("/")
+		track_id = stream_url[index+1:]
+		current_track = Track.objects.get(id=track_id)
+	except KeyError:
+		current_track = ""
+	
 	client.disconnect()
 	return {'current_track': current_track}
