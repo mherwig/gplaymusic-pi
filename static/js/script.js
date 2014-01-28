@@ -10,14 +10,17 @@ $(document).ready(function() {
     });
   });
   
+	$('#nowplaying').collapse({
+		toggle: false
+	})
+
+  
   function ajax(toggle){
-    $.ajax("/ajax/"+toggle+"/",{ type: "GET" }).always(function (response) {
-      results = JSON.parse(response['responseText']);
+    $.ajax("/ajax/"+toggle+"/").always(function() {
       if(toggle != "stop"){
         $("#"+toggle+"-button").toggleClass("active");
       }
     });
-    return false;
   }
 
   $('#random-button').click(function(e){
