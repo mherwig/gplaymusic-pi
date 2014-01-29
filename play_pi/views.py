@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.core.cache import cache
 
 import json
 
@@ -24,20 +25,29 @@ client.connect("localhost", 6600)
 def home(request):
 	if GPLAY_USER == "" or GPLAY_PASS == "":
 		return render_to_response('error.html', context_instance=RequestContext(request))
-	artists = Artist.objects.all().order_by('name')
+	artists = cache.get('artists_all')
+	if artists is None:
+		artists = Artist.objects.all().order_by('name')
+		cache.add('artists_all', artists)
 	return render_to_response('index.html',
 		{'list': artists, 'view':'artist'},
 		context_instance=RequestContext(request))
 
 def artist(request,artist_id):
 	artist = Artist.objects.get(id=artist_id)
-	albums = Album.objects.filter(artist=artist)
+	albums = cache.get('albums_' + artist.name)
+	if albums is None:
+		albums = Album.objects.filter(artist=artist)
+		cache.add('albums_' + artist.name, albums)
 	return render_to_response('index.html',
 		{'list': albums, 'artist': artist, 'view':'album'},
 		context_instance=RequestContext(request))
 
 def playlists(request):
-	playlists = Playlist.objects.all()
+	playlists = cache.get('playlists_all')
+	if playlists is None:
+		playlists = Playlist.objects.all()
+		cache.add('playlists_all', playlists)
 	return render_to_response('index.html',
 		{'list': playlists, 'view':'playlist'},
 		context_instance=RequestContext(request))
@@ -63,8 +73,11 @@ def play_album(request,album_id):
 	for track in tracks:
 		urls.append(reverse('get_stream',args=[track.id,]))
 	mpd_play(urls)
+	current, status = get_current()
+	if request.is_ajax():
+		return HttpResponse(json.dumps({'artist': current.artist.name, 'name': current.name, 'status': status}), 'application/json')
 	return HttpResponseRedirect(reverse('album',args=[album.id,]))
-
+	
 def play_artist(request,artist_id):
 	artist = Artist.objects.get(id=artist_id)
 	albums = Album.objects.filter(artist=artist)
@@ -74,8 +87,11 @@ def play_artist(request,artist_id):
 		for track in tracks:
 			urls.append(reverse('get_stream',args=[track.id,]))
 	mpd_play(urls)
+	current, status = get_current()
+	if request.is_ajax():
+		return HttpResponse(json.dumps({'artist': current.artist.name, 'name': current.name, 'status': status}), 'application/json')
 	return HttpResponseRedirect(reverse('artist',args=[artist.id,]))
-
+	
 def play_playlist(request,playlist_id):
 	playlist = Playlist.objects.get(id=playlist_id)
 	tracks = [pc.track for pc in PlaylistConnection.objects.filter(playlist=playlist)]
@@ -83,6 +99,9 @@ def play_playlist(request,playlist_id):
 	for track in tracks:
 		urls.append(reverse('get_stream',args=[track.id,]))
 	mpd_play(urls)
+	current, status = get_current()
+	if request.is_ajax():
+		return HttpResponse(json.dumps({'artist': current.artist.name, 'name': current.name, 'status': status}), 'application/json')
 	return HttpResponseRedirect(reverse('playlist',args=[playlist.id,]))
 
 def get_stream(request,track_id):
@@ -91,29 +110,36 @@ def get_stream(request,track_id):
 	return HttpResponseRedirect(url)
 
 def play_track(request,track_id):
-	track = Track.objects.get(id=track_id)
-	url = get_gplay_url(track.stream_id)
+	url = reverse('get_stream',args=[track_id,])
 	mpd_play([url,])
-	return HttpResponseRedirect(reverse('album',args=[track.album.id,]))
+	current, status = get_current()
+	if request.is_ajax():
+		return HttpResponse(json.dumps({'artist': current.artist.name, 'name': current.name, 'status': status}), 'application/json')
+	return HttpResponseRedirect(request.GET.get('to', '/'))
 
 def stop(request):
 	client = get_client()
 	client.clear()
 	client.stop()
-	return HttpResponseRedirect(reverse('home'))
-
+	if request.is_ajax():
+		return HttpResponse(json.dumps(client.status()), 'application/json')
+	return HttpResponseRedirect(request.GET.get('to', '/'))
+	
 def random(request):
 	client = get_client()
 	status = client.status()
-	client.random( (-1 * int(status['random'])) + 1 )
-	return HttpResponseRedirect(reverse('home'))
+	client.random(1 - int(status['random']))
+	if request.is_ajax():
+		return HttpResponse(json.dumps(client.status()), 'application/json')
+	return HttpResponseRedirect(request.GET.get('to', '/'))
 
 def repeat(request):
 	client = get_client()
 	status = client.status()
-	client.repeat( (-1 * int(status['repeat'])) + 1 )
-	logger.debug(status)
-	return HttpResponseRedirect(reverse('home'))
+	client.repeat(1 - int(status['repeat']))
+	if request.is_ajax():
+		return HttpResponse(json.dumps(client.status()), 'application/json')
+	return HttpResponseRedirect(request.GET.get('to', '/'))
 	
 def pause(request):
 	client = get_client()
@@ -124,29 +150,21 @@ def pause(request):
 		client.pause(1)
 	elif state == 'pause':
 		client.pause(0)
-
-	logger.debug(status)
-	return HttpResponseRedirect(reverse('home'))
-
-def ajax(request,method):
+	if request.is_ajax():
+		return HttpResponse(json.dumps(client.status()), 'application/json')
+	return HttpResponseRedirect(request.GET.get('to', '/'))
+		
+def get_current():
 	client = get_client()
 	status = client.status()
-	state = status['state']
-	
-	if method == 'random':
-		client.random( (-1 * int(status['random'])) + 1 )
-	elif method == 'repeat':
-		client.repeat( (-1 * int(status['repeat'])) + 1 )
-	elif method == 'pause':
-		if state == 'play':
-			client.pause(1)
-		elif state == 'pause':
-			client.pause(0)
-	elif method == 'stop':
-		client.stop()
-		
-	return_data = client.status()
-	return HttpResponse(simplejson.dumps(return_data), 'application/javascript')
+	try:
+		stream_url = client.currentsong()['file'].rstrip('/')
+		index = stream_url.rfind("/")
+		track_id = stream_url[index+1:]
+		track = Track.objects.get(id=track_id)
+	except KeyError:
+		track = ""
+	return track, status
 
 def get_gplay_url(stream_id):
 	global api

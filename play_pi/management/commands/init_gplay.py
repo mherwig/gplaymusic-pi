@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.core.cache import cache
 from django.db import connection
 from gmusicapi import Webclient
 from play_pi.settings import GPLAY_USER, GPLAY_PASS
@@ -29,6 +30,9 @@ class Command(BaseCommand):
         cursor.execute('DELETE FROM ' + Playlist._meta.db_table)
         cursor.execute('DELETE FROM ' + PlaylistConnection._meta.db_table)
         self.stdout.write('Parsing new data...')
+        
+        cache.clear();
+        self.stdout.write('Cache cleared.')
 
         # Easier to keep track of who we've seen like this...
         artists = []

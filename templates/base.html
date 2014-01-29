@@ -41,19 +41,29 @@
                         <input id="search-box" type="text" class="form-control" placeholder="Filter">
                     </div>
                 </form>
-                <div class="btn-group navbar-right">
-					<a href='{% url "stop" %}' id="stop-button" class="btn btn-default navbar-btn">
-						<span class="glyphicon glyphicon-stop">&nbsp;</span>stop
-					</a>
-					<a href='{% url "stop" %}' id="repeat-button"class="btn {% if mpd_status.repeat == '1' %}active{% endif %} btn-default navbar-btn ">
-						<span class="glyphicon glyphicon-repeat">&nbsp;</span>repeat
-					</a>
-					<a href='{% url "random" %}' id="random-button" class="btn {% if mpd_status.random == '1' %}active{% endif %} btn-default navbar-btn">
-						<span class="glyphicon glyphicon-random">&nbsp;</span>random
-					</a>
-					<a href='{% url "pause" %}' id="pause-button" class="btn {% if mpd_status.state == 'pause' %}active{% elif mpd_status.state == 'stop' %}disabled{% endif %} btn-default navbar-btn">
-						<span class="glyphicon glyphicon-pause">&nbsp;</span>pause
-					</a>
+                <div class="navbar-right">
+					<div class="btn-group">
+						<a href='{% url "stop" %}?to={% firstof request.path '/' %}' id="stop-button" class="btn btn-default navbar-btn">
+							<span class="glyphicon glyphicon-stop"></span>
+						</a>
+						<a href='#' id="previous-button" class="btn btn-default navbar-btn">
+							<span class="glyphicon glyphicon-step-backward"></span>
+						</a>
+						<a href='{% url "pause" %}?to={% firstof request.path '/' %}' id="pause-button" class="btn {% if mpd_status.state == 'pause' %}active{% elif mpd_status.state == 'stop' %}disabled{% endif %} btn-default navbar-btn">
+							<span class="glyphicon glyphicon-pause"></span>
+						</a>
+						<a href='#' id="next-button" class="btn btn-default navbar-btn">
+							<span class="glyphicon glyphicon-step-forward"></span>
+						</a>
+					</div>
+					<div class="btn-group">
+						<a href='{% url "stop" %}?to={% firstof request.path '/' %}' id="repeat-button"class="btn {% if mpd_status.repeat == '1' %}active{% endif %} btn-default navbar-btn ">
+							<span class="glyphicon glyphicon-repeat">&nbsp;</span>repeat
+						</a>
+						<a href='{% url "random" %}?to={% firstof request.path '/' %}' id="random-button" class="btn {% if mpd_status.random == '1' %}active{% endif %} btn-default navbar-btn">
+							<span class="glyphicon glyphicon-random">&nbsp;</span>random
+						</a>
+					</div>
 				</div>
             </div>
             <!-- /.navbar-collapse -->
@@ -63,7 +73,10 @@
 				<div class="panel panel-default col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
 					<div id="nowplaying" class="panel-collapse collapse {% if mpd_status.state == 'play' %}in{%endif%}">
 						<div class="panel-body text-center">
-							 <span class="glyphicon glyphicon-music"></span> {{ current_track.artist.name }} - {{ current_track.name }}
+							<span class="glyphicon glyphicon-music"></span>
+							<span id="nowplaying-text">
+							{{ current_track.artist.name }} - {{ current_track.name }}
+							</span>
 						</div>
 					</div>
 				</div>

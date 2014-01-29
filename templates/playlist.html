@@ -22,7 +22,7 @@
 			<!-- Default panel contents -->
 			<div class="panel-heading">
 				<h3>
-					<a href="{% url 'play_playlist' playlist.id %}">
+					<a href="{% url 'play_playlist' playlist.id %}?to={% firstof request.path '/' %}" name="{{ playlist.id }}" class="play-playlist">
 						<span class="glyphicon glyphicon-play"></span>
 					</a>
 					&nbsp;{{ playlist.name }}
@@ -46,7 +46,11 @@
 						<tr>
 							<td>{{ track.name }}</td>
 							<td></td>
-							<td>{{ track.artist.name }}</td>
+							<td>
+								<a href="{% url 'play_track' track.id %}?to={% firstof request.path '/' %}" name="{{ track.id }}" class="play-track">
+								{{ track.artist.name }}
+								</a>
+							</td>
 							<td>{{ track.get_formatted_duration }}</td>
 						</tr>
 						{% endfor %}

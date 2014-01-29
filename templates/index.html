@@ -14,8 +14,8 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-	<a href="{% url 'play_artist' artist.id %}">
-		<span class="glyphicon glyphicon-play">&nbsp;</span>Play {{ artist.name }}
+	<a href="{% url 'play_artist' artist.id %}?to={% firstof request.path '/' %}" name="{{ artist.id }}" class="play-artist">
+		<span class="glyphicon glyphicon-play"></span> Play {{ artist.name }}
 	</a>
   </div>
   <div class="panel-body">
