@@ -37,7 +37,7 @@ def artist(request,artist_id):
 	artist = Artist.objects.get(id=artist_id)
 	albums = cache.get('albums_' + artist.name)
 	if albums is None:
-		albums = Album.objects.filter(artist=artist)
+		albums = Album.objects.filter(artist=artist).order_by('year').reverse()
 		cache.add('albums_' + artist.name, albums)
 	return render_to_response('index.html',
 		{'list': albums, 'artist': artist, 'view':'album'},

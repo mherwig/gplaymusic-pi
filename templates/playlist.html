@@ -9,7 +9,7 @@
 	<li><a href="{% url 'home' %}">Home</a></li>
 	<li><a href="{% url 'playlists' %}">Playlists</a></li>
 	<li class="active">{{ playlist.name }}</li>
-</ol
+</ol>
 
 <div class="row">
 	<div class="col-xs-12 col-md-2">
@@ -44,14 +44,14 @@
 					<tbody>
 						{% for track in tracks %}
 						<tr>
-							<td>{{ track.name }}</td>
-							<td></td>
 							<td>
 								<a href="{% url 'play_track' track.id %}?to={% firstof request.path '/' %}" name="{{ track.id }}" class="play-track">
-								{{ track.artist.name }}
+								{{ track.name }}
 								</a>
 							</td>
-							<td>{{ track.get_formatted_duration }}</td>
+							<td></td>
+							<td>{{ track.artist.name }}</td>
+							<td>{{ track.duration_formatted }}</td>
 						</tr>
 						{% endfor %}
 					</tbody>

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block jquery %}
-
 {% endblock %}
 
-{% block content %}
+{% load cache %}
 
+{% block content %}
 {% if view == 'album' %}
 <ol class="breadcrumb">
 	<li><a href="{% url 'home' %}">Home</a></li>
@@ -21,35 +21,63 @@
   <div class="panel-body">
 {% endif %}
 
+{% if view == 'artist' %}
+{% cache 86400 artists %}
 <div class="row">
-	{% for item in list %}
-	<div class="{% if view == 'artist' %}col-xs-12 col-md-3{%else%}col-xs-6 col-md-2{%endif%}">
-		<a class="thumblink" href="{% url view item.id %}" alt="">
-			<div name="{{ item.name }}" class="thumbnail">
-				{% if view == 'artist' %}
+	{% for artist in list %}
+	<div class="col-xs-12 col-md-3">
+		<a class="thumblink" href="{% url view artist.id %}" alt="">
+			<div name="{{ artist.name }}" class="thumbnail">
 				<div class="banner">
-					{% if item.get_albums.count > 1 %}
-					<span class="badge">+{{ item.get_albums.count|add:-1 }}</span>
+					{% if artist.albums.count > 1 %}
+					<span class="badge">+{{ artist.albums.count|add:-1 }}</span>
 					{% endif %}
-					<img src="{{ item.get_latest_album.art_url }}" alt="">
-					<img src="{{ item.get_latest_album.art_url }}" alt="">
+					<img src="{{ artist.latest_album.art_url }}" alt="">
+					<img src="{{ artist.latest_album.art_url }}" alt="">
 				</div>
-				{% else %}
-				<img src="{{ item.art_url }}" alt="">
-				</div><div>
-				{% endif %}
 				<div class="caption">
-					<h3>{{ item.name }}</h3>
+					<h3>{{ artist.name }}</h3>
 				</div>
 			</div>
 		</a>
 	</div>
 	{% endfor %}
 </div>
-
-{% if view == 'album' %}
-  </div>
+{% endcache %}
+{% elif view == 'playlist' %}
+{% cache 86400 playlists %}
+<div class="row">
+	{% for playlist in list %}
+	<div class="col-xs-12 col-md-3">
+		<a class="thumblink" href="{% url view playlist.id %}" alt="">
+			<div name="{{ playlist.name }}" class="thumbnail">
+				<div class="banner">	
+					<span class="badge">{{ playlist.tracks_count }}</span>
+					<img src="{{ playlist.art_url }}" alt="">
+				</div>
+				<div class="caption">
+					<h3>{{ playlist.name }}</h3>
+				</div>
+			</div>
+		</a>
+	</div>
+	{% endfor %}
+</div>
+{% endcache %}
+{% elif view == 'album' %}
+<div class="row">
+	{% for album in list %}
+	<div class="col-xs-6 col-md-2">
+		<a class="thumblink" href="{% url view album.id %}" alt="">
+			<div name="{{ album.name }}" class="thumbnail">
+				<img src="{{ album.art_url }}" alt="">
+			</div>
+			<div class="caption">
+				<h3>{{ album.name }}</h3>
+			</div>
+		</a>
+	</div>
+	{% endfor %}
 </div>
 {% endif %}
-
 {% endblock %}

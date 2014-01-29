@@ -21,7 +21,7 @@ class Command(BaseCommand):
         self.stdout.write('Connected to Google Music, downloading data...')
         library = api.get_all_songs()
         self.stdout.write('Data downloaded!')
-        self.stdout.write('Clearing DB...')
+        self.stdout.write('Clearing database...')
         cursor = connection.cursor()
         # This can take a long time using ORM commands on the Pi, so lets Truncate
         cursor.execute('DELETE FROM ' + Track._meta.db_table)
@@ -29,10 +29,11 @@ class Command(BaseCommand):
         cursor.execute('DELETE FROM ' + Artist._meta.db_table)
         cursor.execute('DELETE FROM ' + Playlist._meta.db_table)
         cursor.execute('DELETE FROM ' + PlaylistConnection._meta.db_table)
-        self.stdout.write('Parsing new data...')
         
+        self.stdout.write('Clearing cache...')
         cache.clear();
-        self.stdout.write('Cache cleared.')
+       
+        self.stdout.write('Parsing new data...')
 
         # Easier to keep track of who we've seen like this...
         artists = []

@@ -9,7 +9,7 @@
 	<li><a href="{% url 'home' %}">Home</a></li>
 	<li><a href="{% url 'artist' album.artist.id %}">{{ album.artist.name }}</a></li>
 	<li class="active">{{ album.name }}</li>
-</ol
+</ol>
 
 <div class="row">
 	<div class="col-xs-12 col-md-2">
@@ -49,7 +49,7 @@
 								{{ track.name }}
 								</a>
 							</td>
-							<td>{{ track.get_formatted_duration }}</td>
+							<td>{{ track.duration_formatted }}</td>
 						</tr>
 						{% endfor %}
 					</tbody>
