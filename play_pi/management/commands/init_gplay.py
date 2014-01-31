@@ -67,8 +67,12 @@ class Command(BaseCommand):
             if song['album']+ a not in albums:
                 album = Album()
                 album.name = song['album']
-                album.year = song['year']
                 album.artist = artist
+                try:
+                    album.year = song['year']
+                except:
+                    pass
+           
                 try:
                     album.art_url = song['albumArtUrl']
                 except:
