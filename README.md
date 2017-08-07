@@ -1,4 +1,6 @@
-#gplaymusic-pi
+# gplaymusic-pi
+
+**NOTE: This fork isn't maintained anymore, please have a look at the original project https://github.com/fredley/play-pi**
 
 gplaymusic-pi provides a web-frontend for browsing and playing music from a [Google Play Music](http://play.google.com/music/) library.
 Installed on a RaspberryPi that you usally only access remotely, gmusicplay-pi allows you to turn your Raspi into a jukeboy playing music from your Google Play Music library without the need of having a VNC session for browsing songs.
@@ -10,18 +12,7 @@ Note: Don't expect anything to be finished. Some features might be missing. When
 
 ![Screenshot](http://i.imgur.com/ijDpQfg.png)
 
-###Planned features:
-
-* fully working controls
-* properly updating "now playing"-notification
-* faster library syncing
-* RESTful API
-* Wiimote support
-* Adafruit LCD + Keypad support
-* playlist creating/editing
-* performance tweaks
-
-###Installation instructions (derived from the original project):
+### Installation instructions (derived from the original project):
 
 * Assuming you've got the Pi set up as you want, you'll need to install the required tools:
 `sudo apt-get install mpd mpc python-mpd python-pip screen` I personally use `python-mpd2`
